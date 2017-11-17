@@ -42,17 +42,6 @@
     <PaddingByte>0</PaddingByte>
     <SourceFiles>
         <SourceFile>
-            <Name>Chars.cst</Name>
-            <PrgName />
-            <FileType>6</FileType>
-            <IncludeInBuild>True</IncludeInBuild>
-            <Regions />
-            <Breakpoints />
-            <Bookmarks />
-            <Topmost>False</Topmost>
-            <FileOpen>False</FileOpen>
-        </SourceFile>
-        <SourceFile>
             <Name>Main.bas</Name>
             <PrgName />
             <FileType>1</FileType>
@@ -64,7 +53,7 @@
             <FileOpen>True</FileOpen>
         </SourceFile>
         <SourceFile>
-            <Name>Sprites.spt</Name>
+            <Name>snake.spt</Name>
             <PrgName />
             <FileType>7</FileType>
             <IncludeInBuild>True</IncludeInBuild>

@@ -31,19 +31,29 @@
 16 VLCTY% = 25
 
 !- Color settings
-17 POKE 53281, 0 : REM Black border color
-18 POKE 53280, 0 : REM Black background color
+17 POKE 53281, 0 : REM Black background color
+18 POKE 53280, 1 : REM Black border color
 19 POKE 646, 5 : REM Green text color
 
 20 SO% = 1024 : REM Screen location offset (the screen RAM starts at 1024 and ends at 2023)
 
+        
+!- vic = base address of vic, mb = chosen memory block, mp = memory position (*64 since a sprite block is 64 Byte large)
+21 vic = 53248 : mb%=13 : mp=mb%*64
 
-21 DIM row$(30)
+22 FOR SS = 0 TO 62 
+23 READ B%
+24 POKE MP+SS,B% : NEXT
+25 POKE vic+21,1
+26 POKE 2040,mb% : POKE 53276, 1 :  POKE 53277,1 : POKE 53271,1 : POKE 53285, 13 : POKE 53286, 2 : POKE 53287, 5
+27 xp% = 250 : yp% = 145
+28 poke vic, xp% : poke vic+1, yp%
+
+
 
 !- Initialize snake
 !- MX denotes the maximum number of elements in the "linked list"
-22 MX%=1000 : GOSUB 30 : GOTO 300
-
+29 MX%=1000 : GOSUB 30 : GOTO 300
 
 
 
@@ -66,7 +76,7 @@
 44 POKE S+24,15: POKE S+5,97: POKE S+6,200: POKE S+4,W
 45 FOR X = 0 TO 255 STEP (RND(TI)*15)+1
 46 POKE S,X :POKE S+1,255-X
-47 FOR Y = 0 TO 33: NEXT Y,X
+47 FOR Y = 0 TO 33: NEXT Y,X10000 REM 
 48 FOR X = 0 TO 200: NEXT: POKE S+24,0
 49 FOR X = 0 TO 100: NEXT : RETURN
 
@@ -122,15 +132,16 @@
 !- /////////
 
 300 PRINT CS$ 
-!-305 GOSUB 750
-310 X% = 12 : REM The initial X value of the snake.
-320 Y% = 20 : REM The initial Y value of the snake.
-330 GOSUB 50 
-340 TD% = C% : REM Set the pointer to the last element to the head as it is the only element in the list so far.
-350 GOSUB 150
+310 GOSUB 750
+320 GET BG$ : IF BG$ = "" GOTO 320
+330 POKE vic+21,0 : PRINT CS$ 
+340 X% = 12 : REM The initial X value of the snake.
+350 Y% = 20 : REM The initial Y value of the snake.
+360 GOSUB 50 
+370 TD% = C% : REM Set the pointer to the last element to the head as it is the only element in the list so far.
+380 GOSUB 150
 !- Continuously read user input
-360 GOSUB 400
-370 GOTO 360
+390 GOSUB 400 : GOTO 390
 
 
 
@@ -199,30 +210,86 @@
 710 RETURN
 
 
-750 row$(1) = "     {white}***   *   *    *    *  *  ****"
-751 row$(2) = "    *  **  **  *   ***   * *   *"
-752 row$(3) = "    **     *** *  *   *  **    *"
-753 row$(4) = "     ***   * ***  *****  **    ***"
-754 row$(5) = "       **  *  **  *   *  * *   *"
-755 row$(6) = "    ****   *   *  *   *  *  *  ****"
-756 row$(7) = ""
-757 row$(8) = ""
-758 row$(9) = "    {pink}press {cyan}p {pink}to pause"
-759 row$(10) = ""
-760 row$(11) = "    press {cyan}w {pink}to move up"
-761 row$(12) = "    press {cyan}s {pink}to move down"
-762 row$(13) = "    press {cyan}d {pink}to move right"
-763 row$(14) = "    press {cyan}any key {pink}to start"
-764 row$(15) = ""
-765 row$(16) = "  {green}don't touch the border or you'll die"
-766 row$(17) = "  eat food to increase your score"
-767 row$(18) = ""
-768 row$(19) = ""
-769 row$(20) = "                       {yellow}by patrick ahrens"      
-770 FOR II = 1 TO 20 : PRINT row$(II)  : NEXT
-771 RETURN
 
+!- PRINT START SCREEN
+!- //////////////////
+
+750 PRINT "        {green}QQQ"
+751 PRINT "       Q   Q"
+752 PRINT "       Q     {light green}Q   Q  QQ  Q  Q QQQQ"
+753 PRINT "        {green}QQQ  {light green}QQ  Q Q  Q Q Q  Q"
+754 PRINT "           {green}Q {light green}Q Q Q Q  Q QQ   QQQ"
+755 PRINT "       {green}Q   Q {light green}Q  QQ QQQQ Q Q  Q"
+756 PRINT "        {green}QQQ  {light green}Q   Q Q  Q Q  Q QQQQ"
+757 PRINT ""
+758 PRINT ""
+759 PRINT "    {pink}press {cyan}p {pink}to pause"
+760 PRINT ""
+761 PRINT "    press {cyan}w {pink}to move up"
+762 PRINT "    press {cyan}s {pink}to move down"
+763 PRINT "    press {cyan}d {pink}to move right"
+764 PRINT "    press {cyan}a {pink}to move left"
+765 PRINT ""
+766 PRINT "    press {cyan}any key {pink}to start"
+767 PRINT ""
+769 PRINT "    {white}eat food to score!"
+770 PRINT "    don't touch the border!"
+771 PRINT ""
+772 PRINT ""
+773 PRINT "                  {yellow}(c) by patrick ahrens"      
+774 RETURN
+
+775 PRINT ""
+776 PRINT ""
+777 PRINT "         {red}QQQQ    Q   Q   Q QQQQQ"
+778 PRINT "        Q    Q  Q Q  QQ QQ Q"
+779 PRINT "        Q      Q   Q QQQQQ Q"
+780 PRINT "        Q QQQ  Q   Q Q Q Q QQQQ"
+781 PRINT "        Q    Q QQQQQ Q   Q Q"
+782 PRINT "        Q    Q Q   Q Q   Q Q"
+783 PRINT "         QQQQ  Q   Q Q   Q QQQQQ"
+784 PRINT ""
+785 PRINT ""
+786 PRINT "         QQQQ  Q   Q QQQQQ QQQQ"
+787 PRINT "        Q    Q Q   Q Q     Q   Q"
+788 PRINT "        Q    Q Q   Q Q     Q   Q"
+789 PRINT "        Q    Q Q   Q Q     Q   Q"
+790 PRINT "        Q    Q Q   Q QQQQ  QQQQ"
+791 PRINT "        Q    Q Q   Q Q     Q Q"
+792 PRINT "        Q    Q  Q Q  Q     Q  Q"
+793 PRINT "         QQQQ    Q   QQQQQ Q   Q"
+794 RETURN
+
+
+
+!- GAME OVER HANDLER
+!- /////////////////
 
 800 PRINT CS$
-810 PRINT "game over!"
+810 GOSUB 775
 820 END
+
+
+
+10000 REM SNAKE SPRITE DATA
+10010 DATA 0,170,128
+10020 DATA 2,85,96
+10030 DATA 9,85,88
+10040 DATA 37,85,86
+10050 DATA 37,21,22
+10060 DATA 36,132,134
+10070 DATA 36,132,134
+10080 DATA 36,132,134
+10090 DATA 37,21,22
+10100 DATA 37,85,86
+10110 DATA 9,85,88
+10120 DATA 9,85,88
+10130 DATA 2,85,96
+10140 DATA 2,93,96
+10150 DATA 0,157,128
+10160 DATA 0,12,0
+10170 DATA 0,12,0
+10180 DATA 0,63,0
+10190 DATA 0,51,0
+10200 DATA 0,192,192
+10210 DATA 0,192,192
